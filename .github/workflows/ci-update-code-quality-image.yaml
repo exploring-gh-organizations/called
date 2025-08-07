@@ -28,7 +28,6 @@ jobs:
       repo-name: "code-quality"
       context: "."
       dockerfile: "containers/code-quality/Dockerfile"
-      trivy-ignore-file: "containers/code-quality/.trivyignore"
     secrets:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
