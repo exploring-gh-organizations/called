@@ -1,5 +1,8 @@
 FROM python:3.12-alpine
 
+# Build arg for config path
+ARG PRECOMMIT_CONFIG_PATH=".pre-commit-config.yaml"
+
 # Install all tools + Rust for pre-commit hooks
 RUN apk add --no-cache --upgrade \
     git \
@@ -32,8 +35,10 @@ RUN git config --global --add safe.directory '*' && \
 
 # Put org config directly in workspace
 WORKDIR /workspace
-COPY .pre-commit-config.yaml .pre-commit-config.yaml
+COPY ${PRECOMMIT_CONFIG_PATH} .pre-commit-config.yaml
 
 # Pre-install hooks in workspace
 RUN git init && \
-    pre-commit install-hooks
+    pre-commit install-hooks && \
+    # Clean up cache to avoid false positive secrets in trivy scan
+    rm -rf /root/.cache/pre-commit/repo*
