@@ -14,4 +14,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: ✅ Run pre-commit
-        run: pre-commit run --all-files
+        run: |
+          git config --global --add safe.directory /github/workspace
+          pre-commit run --all-files
