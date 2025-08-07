@@ -45,5 +45,8 @@ RUN git init && \
 # Copy config to root for easy access
 RUN cp .pre-commit-config.yaml /.pre-commit-config.yaml
 
+# Create .trivyignore to exclude pre-commit cache from security scanning
+RUN echo "/root/.cache/pre-commit/" > /.trivyignore
+
 # Set final working directory
 WORKDIR /workspace
