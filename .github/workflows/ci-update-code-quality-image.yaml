@@ -1,4 +1,3 @@
-# ok
 name: Update Code Quality Image
 on:
   push:
@@ -6,6 +5,10 @@ on:
       - "containers/code-quality/Dockerfile"
       - ".github/workflows/ci-update-code-quality-image.yaml"
       - ".pre-commit-config.yaml"
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   build:
