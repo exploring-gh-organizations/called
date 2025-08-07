@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    uses: exploring-gh-organizations/.github/.github/workflows/shared-ci-docker-build-push.yaml@main
+    uses: exploring-gh-organizations/called/.github/workflows/shared-ci-docker-build-push.yaml@main
     with:
       repo-name: "code-quality"
       context: "."
