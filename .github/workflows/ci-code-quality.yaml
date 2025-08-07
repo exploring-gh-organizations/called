@@ -1,8 +1,6 @@
 name: CI Code Quality
 on:
   pull_request:
-  push:
-    branches-ignore: [main] # Avoid redundancy when enforcing PRs
 
 permissions: {}
 
