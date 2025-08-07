@@ -9,25 +9,24 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker.io/reinhuddev1/code-quality:latest
-      options: --user root  # Need root to fix git permissions
+      options: --user root
+      # Add volume for caching between runs
+      volumes:
+        - /tmp/.buildx-cache:/tmp/.buildx-cache
     
     steps:
       - name: 📦 Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for some hooks
+          fetch-depth: 0
       
       - name: 🔧 Fix Git Safe Directory
         run: |
-          # GitHub Actions mounts the workspace, but git sees it as unsafe
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global --add safe.directory /github/workspace
           git config --global --add safe.directory $(pwd)
       
       - name: 🧪 Run pre-commit
         run: |
-          # Copy the pre-commit config from the container
           cp /.pre-commit-config.yaml .pre-commit-config.yaml
-          
-          # Run pre-commit
           pre-commit run --all-files --color=always
