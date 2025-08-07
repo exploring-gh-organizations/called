@@ -20,6 +20,9 @@ RUN pip install --no-cache-dir --user \
     black \
     bandit
 
+# Add user bin to PATH for this stage
+ENV PATH="/root/.local/bin:$PATH"
+
 # Install JS tools
 RUN npm install -g \
     prettier \
