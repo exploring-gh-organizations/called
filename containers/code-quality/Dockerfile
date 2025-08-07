@@ -33,12 +33,14 @@ RUN git config --global --add safe.directory '*' && \
     git config --global user.email "ci@localhost" && \
     git config --global user.name "CI Bot"
 
-# Put org config directly in workspace
-WORKDIR /workspace
-COPY ${PRECOMMIT_CONFIG_PATH} .pre-commit-config.yaml
+# Set PRE_COMMIT_HOME to use global cache
+ENV PRE_COMMIT_HOME=/root/.cache/pre-commit
 
-# Pre-install hooks in workspace
+# Create a temp directory to install hooks globally
+WORKDIR /tmp
+COPY ${PRECOMMIT_CONFIG_PATH} .pre-commit-config.yaml
 RUN git init && \
-    pre-commit install-hooks && \
-    # Clean up cache to avoid false positive secrets in trivy scan
-    rm -rf /root/.cache/pre-commit/repo*
+    pre-commit install-hooks
+
+# Set final working directory
+WORKDIR /workspace
