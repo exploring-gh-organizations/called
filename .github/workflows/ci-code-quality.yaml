@@ -1,0 +1,21 @@
+name: Code Quality
+on:
+  pull_request:
+  push:
+    branches-ignore: [main] # Avoid redundancy when enforcing PRs
+
+permissions: {}
+
+jobs:
+  code-quality:
+    name: 🧪 Code Quality Checks
+    runs-on: ubuntu-latest
+    container:
+      image: reinhuddev1/code-quality:latest
+    
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 🧪 Run pre-commit
+        run: pre-commit run --all-files
