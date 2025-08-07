@@ -71,7 +71,6 @@ jobs:
             uv sync --all-extras --dev --system
           else
             uv pip install --system -r requirements.txt
-            [ -f "requirements-dev.txt" ] && uv pip install --system -r requirements-dev.txt
           fi
 
       - name: 🧪 Run tests with coverage
