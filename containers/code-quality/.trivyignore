@@ -1,0 +1,15 @@
+# Ignore pre-commit cache directory where test secrets might be
+/root/.cache/pre-commit
+/opt/venv/lib/python*/site-packages/pre_commit
+/tmp/.cache/pre-commit
+
+# Ignore pre-commit config that has test repos
+/opt/pre-commit-config.yaml
+
+# Python packages that might have test credentials
+/opt/venv/lib/python*/site-packages/gitleaks
+/opt/venv/lib/python*/site-packages/bandit
+
+# Ignore specific CVEs that are false positives or acceptable
+# Add specific CVE IDs here if needed, e.g.:
+# CVE-2023-12345
