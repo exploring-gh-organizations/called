@@ -18,11 +18,11 @@ on:
         description: "Whether to push on PR (should be false for security)"
         type: boolean
         default: false
-    secrets:
-      DOCKER_USERNAME:
-        required: true
-      DOCKER_TOKEN:
-        required: true
+    # secrets:
+    #   DOCKER_USERNAME:
+    #     required: true
+    #   DOCKER_TOKEN:
+    #     required: true
 
 jobs:
   build-and-scan:
