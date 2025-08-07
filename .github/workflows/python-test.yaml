@@ -47,7 +47,7 @@ jobs:
         with:
           version: "0.7.19"
           enable-cache: true
-          cache-dependency-glob: "**/uv.lock"
+          cache-dependency-glob: ${{ steps.python-check.outputs.cache-pattern }}
 
       - name: 🐍 Setup Python
         if: steps.python-check.outputs.found == 'true'
