@@ -1,52 +1,73 @@
-FROM python:3.12-alpine
+# Use multi-stage build for smaller final image
+FROM python:3.12-alpine AS builder
 
-# Build arg for config path
-ARG PRECOMMIT_CONFIG_PATH=".pre-commit-config.yaml"
-
-# Install all tools + Rust for pre-commit hooks
-RUN apk add --no-cache --upgrade \
+# Install build dependencies in one layer
+RUN apk add --no-cache --virtual .build-deps \
     git \
     curl \
+    wget \
+    bash \
+    build-base \
+    rust \
+    cargo \
+    nodejs \
+    npm
+
+# Install Python tools
+RUN pip install --no-cache-dir --user \
+    pre-commit \
+    ruff \
+    black \
+    bandit
+
+# Install JS tools
+RUN npm install -g \
+    prettier \
+    @biomejs/biome
+
+# Install hadolint
+RUN wget -O /usr/local/bin/hadolint \
+    https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 && \
+    chmod +x /usr/local/bin/hadolint
+
+# Pre-install hooks with your config
+COPY .pre-commit-config.yaml /tmp/.pre-commit-config.yaml
+WORKDIR /tmp
+RUN git init && \
+    git config user.email "ci@localhost" && \
+    git config user.name "CI Bot" && \
+    PRE_COMMIT_HOME=/opt/pre-commit pre-commit install-hooks
+
+# Final stage - runtime only
+FROM python:3.12-alpine
+
+# Install only runtime dependencies
+RUN apk add --no-cache \
+    git \
     shellcheck \
     nodejs \
     npm \
-    wget \
-    bash \
-    sqlite \
-    rust \
-    cargo && \
-    wget --progress=dot:giga -O /usr/local/bin/hadolint \
-    https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 && \
-    chmod +x /usr/local/bin/hadolint && \
-    pip install --no-cache-dir --upgrade pip setuptools && \
-    pip install --no-cache-dir \
-        pre-commit \
-        ruff \
-        black \
-        bandit && \
-    npm install -g \
-        prettier \
-        @biomejs/biome
+    bash
+
+# Copy pre-built tools and cache from builder
+COPY --from=builder /root/.local /root/.local
+COPY --from=builder /usr/local/bin/hadolint /usr/local/bin/hadolint
+COPY --from=builder /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=builder /usr/local/bin/prettier /usr/local/bin/prettier
+COPY --from=builder /usr/local/bin/biome /usr/local/bin/biome
+COPY --from=builder /opt/pre-commit /opt/pre-commit
+COPY --from=builder /tmp/.pre-commit-config.yaml /.pre-commit-config.yaml
+
+# Set environment variables
+ENV PATH="/root/.local/bin:$PATH" \
+    PRE_COMMIT_HOME="/opt/pre-commit"
 
 # Set git config
 RUN git config --global --add safe.directory '*' && \
     git config --global user.email "ci@localhost" && \
     git config --global user.name "CI Bot"
 
-# Set PRE_COMMIT_HOME to use global cache
-ENV PRE_COMMIT_HOME=/root/.cache/pre-commit
-
-# Create a temp directory to install hooks globally
-WORKDIR /tmp
-COPY ${PRECOMMIT_CONFIG_PATH} .pre-commit-config.yaml
-RUN git init && \
-    pre-commit install-hooks
-
-# Copy config to root for easy access
-RUN cp .pre-commit-config.yaml /.pre-commit-config.yaml
-
-# Create .trivyignore to exclude pre-commit cache from security scanning
-RUN echo "/root/.cache/pre-commit/" > /.trivyignore
-
-# Set final working directory
 WORKDIR /workspace
+
+# Simple entry point
+CMD ["pre-commit", "run", "--all-files"]
