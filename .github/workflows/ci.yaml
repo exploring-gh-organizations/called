@@ -2,12 +2,6 @@ name: CI
 
 on:
   push:
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      
+  code-quality:
+    uses: exploring-gh-organizations/called/.github/workflows/shared-ci-code-quality.yaml@main
