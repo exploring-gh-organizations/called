@@ -24,14 +24,13 @@ codespell==2.4.1
 
 # Validation tools
 validate-pyproject==0.24.1
-validate-pyproject-schema-store[all]==2024.12.16
-
-# Commit message tools
-commitizen==4.4.1
-cz-conventional-gitmoji==0.3.5
 
 # JSON Schema validation dependencies
 check-jsonschema==0.32.1
 
 # Additional Python tools for pre-commit hooks
 shellcheck-py==0.10.0.1
+
+# Commit message tools (optional, remove if not using)
+# commitizen==4.4.1
+# cz-conventional-gitmoji==0.3.5
