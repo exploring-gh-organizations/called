@@ -72,7 +72,7 @@ jobs:
           format: "table"
           exit-code: "1"
           severity: "CRITICAL"
-          trivyignores: "/.trivyignore"
+          skip-files: "/opt/pre-commit/repo*"
 
       - name: 🔐 Login to registry (only if pushing)
         if: ${{ (github.event_name != 'pull_request') || inputs.push-on-pr }}
