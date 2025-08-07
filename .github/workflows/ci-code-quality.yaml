@@ -1,3 +1,4 @@
+# ok
 name: CI Code Quality
 on:
   pull_request:
