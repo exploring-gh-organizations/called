@@ -1,3 +1,4 @@
+# ok
 name: Update Code Quality Image
 on:
   push:
