@@ -2,8 +2,8 @@ name: Docker Build & Security / Push
 on:
   workflow_call:
     inputs:
-      docker-repo:
-        description: "Docker repository name (e.g., opencloudhub/my-app)"
+      repo-name:
+        description: "Repository name"
         type: string
         required: true
       context:
@@ -40,7 +40,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ inputs.docker-repo }}
+          images: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.repo-name }
           tags: |
             type=ref,event=branch
             type=ref,event=pr
