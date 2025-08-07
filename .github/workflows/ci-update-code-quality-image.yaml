@@ -23,7 +23,7 @@ permissions:
 jobs:
   build:
     name: 🏗️ Build Code Quality Image
-    uses: exploring-gh-organizations/called/.github/workflows/shared-docker-build-push.yaml@main
+    uses: exploring-gh-organizations/called/.github/workflows/shared-ci-docker-build-push.yaml@main
     with:
       repo-name: "code-quality"
       context: "."
