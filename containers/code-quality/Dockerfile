@@ -1,7 +1,8 @@
 FROM python:3.12-slim
 
 # Install system dependencies that hooks need
-RUN apt-get update && apt-get install -y \
+# hadolint ignore=DL3008
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     wget \
@@ -38,10 +39,10 @@ RUN git init && \
     # Install all environments
     pre-commit install-hooks && \
     # Run once to ensure everything is cached
-    pre-commit run --all-files || true && \
-    # Clean up the temp repo but keep the cache
-    cd / && \
-    rm -rf /tmp/setup
+    pre-commit run --all-files || true
+# Clean up the temp repo but keep the cache
+WORKDIR /
+RUN rm -rf /tmp/setup
 
 # Configure git for GitHub Actions
 RUN git config --global --add safe.directory '*'
