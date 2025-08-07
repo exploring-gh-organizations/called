@@ -12,13 +12,6 @@ jobs:
     steps:
       - name: 📦 Checkout
         uses: actions/checkout@v4
-
-      - name: 🐛 Debug git config
-        run: |
-          git config --global --list | grep safe || echo "No safe directories configured"
-          pwd
-          ls -la .git/
-          git status || echo "Git status failed"
           
       - name: ✅ Run pre-commit
         run: |
