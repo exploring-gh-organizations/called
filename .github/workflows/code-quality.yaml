@@ -15,8 +15,6 @@ jobs:
 
       - name: ✅ Run pre-commit
         run: |
-          git config --global --add safe.directory /__w/caller/caller
-          git config --global --add safe.directory $PWD
           cp /app/.pre-commit-config.yaml .
           pre-commit install-hooks
           pre-commit run --all-files
