@@ -1,7 +1,17 @@
 FROM python:3.12-slim
 
-# Install git and pre-commit
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+# Install system dependencies that hooks need
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    shellcheck \
+    nodejs \
+    npm \
+    default-jre-headless \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pre-commit
 RUN pip install pre-commit
 
 # Copy the config
@@ -16,6 +26,9 @@ RUN git init && \
 
 # Set working directory
 WORKDIR /workspace
+
+# Configure git for GitHub Actions
+RUN git config --global --add safe.directory '*'
 
 # Run pre-commit
 ENTRYPOINT ["pre-commit"]
