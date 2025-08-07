@@ -8,7 +8,7 @@ on:
 jobs:
   quality:
     name: Code Quality
-    uses: exploring-gh-organizations/.github/.github/workflows/shared-code-quality.yaml@main
+    uses: exploring-gh-organizations/.github/.github/workflows/shared-ci-code-quality.yaml@main
     # Everything is pre-baked in the container, just run!
     # Optional: skip specific hooks if needed
     # with:
