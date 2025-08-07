@@ -4,16 +4,10 @@ on:
   push:
     paths:
       - "containers/code-quality/Dockerfile"
-      - "containers/code-quality/requirements-precommit.txt"
       - ".github/workflows/ci-update-code-quality-image.yaml"
       - ".pre-commit-config.yaml"
     branches: [main]
   workflow_dispatch:
-    inputs:
-      force-rebuild:
-        description: "Force rebuild even without changes"
-        type: boolean
-        default: false
 
 permissions:
   contents: read
