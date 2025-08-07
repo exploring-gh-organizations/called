@@ -20,7 +20,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Python tools in venv
-COPY requirements-precommit.txt /tmp/
+COPY containers/code-quality/requirements-precommit.txt /tmp/
 RUN pip install --no-cache-dir -r /tmp/requirements-precommit.txt
 
 # Install Rust-based tools
@@ -38,6 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     shellcheck \
     make \
     curl \
+    default-jre-headless \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Python virtual environment
@@ -63,24 +64,46 @@ RUN curl -L https://github.com/mrtazz/checkmake/releases/download/0.2.2/checkmak
     -o /usr/local/bin/checkmake && \
     chmod +x /usr/local/bin/checkmake
 
+# Install shellcheck-py (for better shellcheck)
+RUN pip install shellcheck-py==0.10.0.1
+
 # Install Node.js tools globally
 RUN npm install -g \
     @biomejs/biome@1.9.4 \
     prettier@3.4.2 \
     && npm cache clean --force
 
+# Install pretty-format-java (needs Java)
+RUN curl -L https://github.com/google/google-java-format/releases/download/v1.24.0/google-java-format-1.24.0-all-deps.jar \
+    -o /usr/local/lib/google-java-format.jar && \
+    echo '#!/bin/bash\njava -jar /usr/local/lib/google-java-format.jar "$@"' > /usr/local/bin/google-java-format && \
+    chmod +x /usr/local/bin/google-java-format
+
 # Configure git for pre-commit
 RUN git config --global --add safe.directory '*' && \
     git config --global user.email "ci@opencloudlab.dev" && \
     git config --global user.name "CI Bot"
 
-# Create non-root user for running pre-commit
-RUN useradd -m -s /bin/bash precommit
-USER precommit
+# Copy and install pre-commit config with all hooks
+COPY .pre-commit-config.yaml /opt/pre-commit-config.yaml
+
+# Pre-install all hooks in the container
+RUN mkdir -p /tmp/pre-install && \
+    cd /tmp/pre-install && \
+    git init && \
+    cp /opt/pre-commit-config.yaml .pre-commit-config.yaml && \
+    pre-commit install-hooks && \
+    cd / && \
+    rm -rf /tmp/pre-install
+
+# Set environment for pre-commit cache (hooks are already installed)
+ENV PRE_COMMIT_HOME=/root/.cache/pre-commit
+
 WORKDIR /workspace
 
-# Set environment for pre-commit cache
-ENV PRE_COMMIT_HOME=/tmp/.cache/pre-commit
+# Create entrypoint script
+RUN echo '#!/bin/bash\ncp /opt/pre-commit-config.yaml .pre-commit-config.yaml 2>/dev/null || true\nexec pre-commit "$@"' > /entrypoint.sh && \
+    chmod +x /entrypoint.sh
 
-ENTRYPOINT ["pre-commit"]
-CMD ["run", "--all-files"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["run", "--all-files", "--color=always"]
