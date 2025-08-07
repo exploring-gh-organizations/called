@@ -42,5 +42,8 @@ COPY ${PRECOMMIT_CONFIG_PATH} .pre-commit-config.yaml
 RUN git init && \
     pre-commit install-hooks
 
+# Copy config to root for easy access
+RUN cp .pre-commit-config.yaml /.pre-commit-config.yaml
+
 # Set final working directory
 WORKDIR /workspace
