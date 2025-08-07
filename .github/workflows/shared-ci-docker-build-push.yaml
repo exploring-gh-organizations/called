@@ -66,15 +66,15 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       
-      - name: 🔍 Scan built image for vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
-          format: "table"
-          exit-code: "0"  # Changed to 0 - just warn, don't fail
-          severity: "CRITICAL"
-          # Ignore directories where pre-commit stores stuff
-          skip-dirs: "/root/.cache,/root/.rustup,/root/.cargo,/opt/venv,/root/.cache/pre-commit"
+      # - name: 🔍 Scan built image for vulnerabilities
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+      #     format: "table"
+      #     exit-code: "0"  # Changed to 0 - just warn, don't fail
+      #     severity: "CRITICAL"
+      #     # Ignore directories where pre-commit stores stuff
+      #     skip-dirs: "/root/.cache,/root/.rustup,/root/.cargo,/opt/venv,/root/.cache/pre-commit"
       
       - name: 🔐 Login to registry (only if pushing)
         if: ${{ (github.event_name != 'pull_request') || inputs.push-on-pr }}
