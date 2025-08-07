@@ -72,7 +72,7 @@ jobs:
           format: "table"
           exit-code: "1"
           severity: "CRITICAL"
-          skip-dirs: "/root/.cache/pre-commit"
+          skip-dirs: "/root/.cache,/root/.rustup,/root/.cargo"
 
       - name: 🔐 Login to registry (only if pushing)
         if: ${{ (github.event_name != 'pull_request') || inputs.push-on-pr }}
