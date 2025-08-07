@@ -16,9 +16,10 @@ jobs:
       - name: 📦 Checkout
         uses: actions/checkout@v4
         
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+      
       - name: 🧪 Run pre-commit
-        env:
-          PRE_COMMIT_HOME: /root/.cache/pre-commit
         run: |
           git config --global --add safe.directory $PWD
           cp /.pre-commit-config.yaml .
