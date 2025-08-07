@@ -1,6 +1,10 @@
-name: 🧪 Code Quality
+name: Code Quality
 on:
-  workflow_call:
+  pull_request:
+  push:
+    branches-ignore: [main] # Avoid redundancy when enforcing PRs
+
+permissions: {}
 
 jobs:
   code-quality:
@@ -12,10 +16,6 @@ jobs:
     steps:
       - name: 📦 Checkout
         uses: actions/checkout@v4
-          
-      - name: ✅ Run pre-commit
-        run: |
-          git config --global --add safe.directory $PWD
-          cp /app/.pre-commit-config.yaml .
-          pre-commit install-hooks
-          pre-commit run --all-files
+        
+      - name: 🧪 Run pre-commit
+        run: pre-commit run --all-files
