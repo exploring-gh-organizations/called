@@ -1,68 +1,17 @@
-name: Code Quality Checks
-
+name: Shared Code Quality
 on:
   workflow_call:
-    inputs:
-      skip-hooks:
-        description: "Comma-separated list of hook IDs to skip"
-        type: string
-        required: false
-      extra-args:
-        description: "Additional arguments for pre-commit run"
-        type: string
-        default: "--color=always"
-      files:
-        description: "Specific files to check (default: all files)"
-        type: string
-        default: "--all-files"
 
 jobs:
-  pre-commit:
-    name: 🔍 Pre-commit Checks
+  code-quality:
+    name: Code Quality Checks
     runs-on: ubuntu-latest
     container:
-      # Using org variables for registry flexibility
-      image: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}/${{ vars.DOCKER_USERNAME || github.repository_owner }}/code-quality:latest
-      options: --user root
-    
+      image: reinhuddev1/code-quality:latest
+
     steps:
-      - name: 📦 Checkout Code
+      - name: 📦 Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Some hooks need full history
-      
-      - name: 🚀 Run Pre-commit Hooks
-        env:
-          SKIP: ${{ inputs.skip-hooks }}
-        run: |
-          # The container already has the config and all hooks installed
-          # Just run them directly
-          pre-commit run ${{ inputs.files }} ${{ inputs.extra-args }} || EXIT_CODE=$?
-          
-          # If there were failures, show what changed
-          if [ "${EXIT_CODE:-0}" -ne 0 ]; then
-            echo "::error::Pre-commit checks failed. See logs above for details."
-            echo ""
-            echo "Files that were modified:"
-            git diff --name-only --color=always
-            echo ""
-            echo "Detailed changes:"
-            git diff --color=always
-            exit ${EXIT_CODE}
-          fi
-      
-      - name: 📊 Upload Diff (if failed)
-        if: failure()
-        run: |
-          git diff > pre-commit-changes.diff
-          echo "Pre-commit suggested changes have been saved to pre-commit-changes.diff"
-      
-      - name: 📤 Upload Artifacts (if failed)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pre-commit-results
-          path: |
-            pre-commit-changes.diff
-            **/*.log
-          retention-days: 1
+
+      - name: 🧪 Run pre-commit
+        run: pre-commit run --all-files
