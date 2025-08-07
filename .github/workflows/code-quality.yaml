@@ -13,7 +13,15 @@ jobs:
       - name: 📦 Checkout
         uses: actions/checkout@v4
 
+      - name: 🐛 Debug git setup
+        run: |
+          pwd
+          ls -la
+          git status
+          git config --list
+          ls -la .git/ || echo "No .git directory"
+      
       - name: ✅ Run pre-commit
         run: |
-          git config --global --add safe.directory /github/workspace
+          git config --global --add safe.directory '*'
           pre-commit run --all-files
