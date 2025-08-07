@@ -58,14 +58,29 @@ jobs:
       - name: 📥 Install dependencies
         if: steps.python-check.outputs.found == 'true'
         run: |
+          set -x  # Enable debug output
+          echo "🔍 Checking for project files..."
+          ls -la
+          
           if [ -f "uv.lock" ]; then
+            echo "📦 Found uv.lock, syncing..."
             uv sync --locked --all-extras --dev --system
+            echo "✅ uv sync completed with exit code: $?"
           elif [ -f "pyproject.toml" ]; then
+            echo "📦 Found pyproject.toml, syncing..."
             uv sync --all-extras --dev --system
+            echo "✅ uv sync completed with exit code: $?"
           else
+            echo "📦 Using requirements.txt..."
             uv pip install --system -r requirements.txt
-            [ -f "requirements-dev.txt" ] && uv pip install --system -r requirements-dev.txt
+            echo "✅ requirements.txt installed with exit code: $?"
+            if [ -f "requirements-dev.txt" ]; then
+              uv pip install --system -r requirements-dev.txt
+              echo "✅ requirements-dev.txt installed with exit code: $?"
+            fi
           fi
+          
+          echo "🎉 Dependencies installation completed successfully"
 
       - name: 🧪 Run tests with coverage
         if: steps.python-check.outputs.found == 'true' && inputs.run-coverage
