@@ -1,22 +1,34 @@
 name: Update Code Quality Image
+
 on:
   push:
     paths:
       - "containers/code-quality/Dockerfile"
+      - "containers/code-quality/requirements-precommit.txt"
       - ".github/workflows/ci-update-code-quality-image.yaml"
       - ".pre-commit-config.yaml"
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      force-rebuild:
+        description: "Force rebuild even without changes"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
+  packages: write
+  security-events: write
 
 jobs:
   build:
-    uses: exploring-gh-organizations/called/.github/workflows/shared-ci-docker-build-push.yaml@main
+    name: 🏗️ Build Code Quality Image
+    uses: ./.github/workflows/shared-docker-build-push.yaml
     with:
       repo-name: "code-quality"
       context: "."
       dockerfile: "containers/code-quality/Dockerfile"
+      trivy-ignore-file: "containers/code-quality/.trivyignore"
     secrets:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
