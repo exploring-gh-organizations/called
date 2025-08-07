@@ -5,12 +5,10 @@ FROM python:3.12-slim AS builder
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
-    wget \
     ca-certificates \
-    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pre-commit and dependencies
+# Install pre-commit
 RUN pip install --no-cache-dir pre-commit
 
 # Copy the config
@@ -33,15 +31,18 @@ RUN git init && \
     # Run once to ensure everything is cached
     pre-commit run --all-files || true
 
-# Clean up unnecessary cache files
+# Aggressive cleanup to reduce size
 RUN find /opt/pre-commit-cache -type f -name "*.pyc" -delete && \
-    find /opt/pre-commit-cache -type d -name "__pycache__" -delete && \
-    find /opt/pre-commit-cache -type f -name "*.whl" -delete
+    find /opt/pre-commit-cache -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true && \
+    find /opt/pre-commit-cache -type d -name ".git" -exec rm -rf {} + 2>/dev/null || true && \
+    find /opt/pre-commit-cache -name "*.whl" -delete && \
+    find /opt/pre-commit-cache -name "*.tar.gz" -delete && \
+    rm -rf /root/.cache
 
 # Final stage - smaller runtime
 FROM python:3.12-slim
 
-# Install only runtime dependencies
+# Install only runtime dependencies - minimal packages
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
@@ -49,20 +50,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     shellcheck \
     nodejs \
     npm \
-    default-jre-headless \
-    && rm -rf /var/lib/apt/lists/* \
+    openjdk-17-jre-headless \
     && apt-get clean \
-    && rm -rf /var/cache/apt/archives
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
 
-# Install hadolint separately
+# Install hadolint (static binary)
 RUN curl -sSL https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 \
     -o /usr/local/bin/hadolint && \
     chmod +x /usr/local/bin/hadolint
 
-# Install pre-commit
-RUN pip install --no-cache-dir pre-commit
+# Install pre-commit (small)
+RUN pip install --no-cache-dir pre-commit && \
+    rm -rf /root/.cache
 
-# Copy pre-commit cache from builder
+# Copy only essentials from builder
 COPY --from=builder /opt/pre-commit-cache /opt/pre-commit-cache
 COPY --from=builder /.pre-commit-config.yaml /.pre-commit-config.yaml
 
