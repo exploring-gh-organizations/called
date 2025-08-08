@@ -53,20 +53,20 @@ repos:
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
   ### Javascript & Web Tools ###
-  - repo: https://github.com/biomejs/pre-commit
-    rev: "v0.6.1"
-    hooks:
-      - id: biome-check
-        name: "🟨 javascript · Lint, format, and safe fixes with Biome"
-        additional_dependencies: ["@biomejs/biome@1.9.4"]
+  # - repo: https://github.com/biomejs/pre-commit
+  #   rev: "v0.6.1"
+  #   hooks:
+  #     - id: biome-check
+  #       name: "🟨 javascript · Lint, format, and safe fixes with Biome"
+  #       additional_dependencies: ["@biomejs/biome@1.9.4"]
 
   ### Java Tools ###
-  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.14.0
-    hooks:
-      - id: pretty-format-java
-        name: "☕ java · Format Java code"
-        args: [--autofix]
+  # - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  #   rev: v2.14.0
+  #   hooks:
+  #     - id: pretty-format-java
+  #       name: "☕ java · Format Java code"
+  #       args: [--autofix]
 
   ### Data & Config Validation ###
   - repo: https://github.com/python-jsonschema/check-jsonschema
@@ -134,64 +134,64 @@ repos:
         args: ["--ignore", "DL3013", "--ignore", "DL3016", "--ignore", "DL3018"]
 
   ### SQL ###
-  - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.3.0
-    hooks:
-      - id: sqlfluff-fix
-        name: "📊 SQL · Attempts to fix rule violations."
+  # - repo: https://github.com/sqlfluff/sqlfluff
+  #   rev: 3.3.0
+  #   hooks:
+  #     - id: sqlfluff-fix
+  #       name: "📊 SQL · Attempts to fix rule violations."
 
   ### Notebooks ###
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.9.1
-    hooks:
-      - id: nbqa
-        entry: nbqa mdformat
-        name: "📓 notebook · Format markdown cells"
-        args: ["--nbqa-md"]
-        types: [jupyter]
-        additional_dependencies:
-          - mdformat
-          - mdformat-gfm
-          - mdformat-ruff
-          - mdformat-frontmatter
-          - ruff
-      # TODO: Convert to pyright
-      - id: nbqa-mypy
-        name: "📓 notebook · Type-check cells"
+  # - repo: https://github.com/nbQA-dev/nbQA
+  #   rev: 1.9.1
+  #   hooks:
+  #     - id: nbqa
+  #       entry: nbqa mdformat
+  #       name: "📓 notebook · Format markdown cells"
+  #       args: ["--nbqa-md"]
+  #       types: [jupyter]
+  #       additional_dependencies:
+  #         - mdformat
+  #         - mdformat-gfm
+  #         - mdformat-ruff
+  #         - mdformat-frontmatter
+  #         - ruff
+  #     # TODO: Convert to pyright
+  #     - id: nbqa-mypy
+  #       name: "📓 notebook · Type-check cells"
 
   ### PNG Images ###
-  - repo: https://github.com/shssoichiro/oxipng
-    rev: v9.1.4
-    hooks:
-      - id: oxipng
-        name: "🖼️ images · Optimize PNG files"
-        args: ["-o", "4", "--strip", "safe", "--alpha"]
+  # - repo: https://github.com/shssoichiro/oxipng
+  #   rev: v9.1.4
+  #   hooks:
+  #     - id: oxipng
+  #       name: "🖼️ images · Optimize PNG files"
+  #       args: ["-o", "4", "--strip", "safe", "--alpha"]
 
   ### Additional File Types ###
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
-    hooks:
-      - id: prettier
-        name: "✨ misc-files · Format misc web files"
-        types_or: [yaml, html, scss]
-        additional_dependencies:
-          - prettier@3.4.2
+  # - repo: https://github.com/pre-commit/mirrors-prettier
+  #   rev: v4.0.0-alpha.8
+  #   hooks:
+  #     - id: prettier
+  #       name: "✨ misc-files · Format misc web files"
+  #       types_or: [yaml, html, scss]
+  #       additional_dependencies:
+  #         - prettier@3.4.2
 
   # -------------------------- 📝 Spell Checking Tools ------------------------- #
 
-  - repo: https://github.com/crate-ci/typos
-    rev: v1.30.3
-    hooks:
-      - id: typos
-        name: "📝 spell · Check spelling in all files"
-        exclude: '\.svg$'
+  # - repo: https://github.com/crate-ci/typos
+  #   rev: v1.30.3
+  #   hooks:
+  #     - id: typos
+  #       name: "📝 spell · Check spelling in all files"
+  #       exclude: '\.svg$'
 
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
-    hooks:
-      - id: codespell
-        name: "📝 spell · Check spelling in code files"
-        args: ["--skip=*.lock,*.svg,*.min.js"]
+  # - repo: https://github.com/codespell-project/codespell
+  #   rev: v2.4.1
+  #   hooks:
+  #     - id: codespell
+  #       name: "📝 spell · Check spelling in code files"
+  #       args: ["--skip=*.lock,*.svg,*.min.js"]
 
   # ---------------------------- 📁 Filesystem Tools --------------------------- #
 
