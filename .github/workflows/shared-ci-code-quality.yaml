@@ -1,36 +1,4 @@
 name: Shared Code Quality
-
-# on:
-#   workflow_call:
-
-# jobs:
-#   code-quality:
-#     name: Code Quality Checks
-#     runs-on: ubuntu-latest
-#     container:
-#       image: docker.io/reinhuddev1/code-quality:latest
-#       options: --user root
-#       # Add volume for caching between runs
-#       volumes:
-#         - /tmp/.buildx-cache:/tmp/.buildx-cache
-    
-#     steps:
-#       - name: 📦 Checkout
-#         uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0
-      
-#       - name: 🔧 Fix Git Safe Directory
-#         run: |
-#           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-#           git config --global --add safe.directory /github/workspace
-#           git config --global --add safe.directory $(pwd)
-      
-#       - name: 🧪 Run pre-commit
-#         run: |
-#           cp /.pre-commit-config.yaml .pre-commit-config.yaml
-#           pre-commit run --all-files --color=always
-
 on:
   workflow_call:
     inputs:
@@ -67,7 +35,10 @@ jobs:
           path: |
             /usr/local/bin/hadolint
             /usr/local/bin/shellcheck
-          key: system-deps-${{ runner.os }}-v1
+            /usr/local/bin/typos
+            ~/.npm
+            /usr/local/lib/node_modules
+          key: system-deps-${{ runner.os }}-v2
       
       - name: 🔨 Install system dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -81,6 +52,18 @@ jobs:
           sudo curl -sSL https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.linux.x86_64.tar.xz \
             | sudo tar -xJ -C /usr/local/bin --strip-components=1 shellcheck-v0.10.0/shellcheck
           sudo chmod +x /usr/local/bin/shellcheck
+          
+          # Install Node.js for JavaScript/TypeScript tools
+          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          
+          # Install biome for JS/TS formatting
+          npm install -g @biomejs/biome
+          
+          # Install typos for spell checking (Rust binary)
+          sudo curl -sSL https://github.com/crate-ci/typos/releases/download/v1.30.3/typos-v1.30.3-x86_64-unknown-linux-musl.tar.gz \
+            | sudo tar -xz -C /usr/local/bin ./typos
+          sudo chmod +x /usr/local/bin/typos
       
       - name: 💾 Cache pre-commit environments
         uses: actions/cache@v4
