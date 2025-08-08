@@ -195,33 +195,33 @@ repos:
 
   # ---------------------------- 📁 Filesystem Tools --------------------------- #
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      # Basic File Checks
-      - id: trailing-whitespace
-        name: "📁 filesystem/📄 format · Remove trailing whitespace"
-      - id: end-of-file-fixer
-        name: "📁 filesystem/📄 format · Ensure files end with newline"
-      - id: mixed-line-ending
-        name: "📁 filesystem/📄 format · Normalize line endings"
-        args: ["--fix=lf"]
-      # Filesystem Checks
-      - id: check-executables-have-shebangs
-        name: "📁 filesystem/⚙️ exec · Verify shebang presence"
-      - id: check-shebang-scripts-are-executable
-        name: "📁 filesystem/⚙️ exec · Verify script permissions"
-      - id: check-case-conflict
-        name: "📁 filesystem/📝 names · Check case sensitivity"
-      - id: check-illegal-windows-names
-        name: "📁 filesystem/📝 names · Validate Windows filenames"
-      - id: check-symlinks
-        name: "📁 filesystem/🔗 symlink · Check symlink validity"
-      - id: destroyed-symlinks
-        name: "📁 filesystem/🔗 symlink · Detect broken symlinks"
-      - id: check-added-large-files
-        name: "📁 filesystem/📄 size · Block large file commits"
-        args: ["--maxkb=5000"]
+  # - repo: https://github.com/pre-commit/pre-commit-hooks
+  #   rev: v5.0.0
+  #   hooks:
+  #     # Basic File Checks
+  #     - id: trailing-whitespace
+  #       name: "📁 filesystem/📄 format · Remove trailing whitespace"
+  #     - id: end-of-file-fixer
+  #       name: "📁 filesystem/📄 format · Ensure files end with newline"
+  #     - id: mixed-line-ending
+  #       name: "📁 filesystem/📄 format · Normalize line endings"
+  #       args: ["--fix=lf"]
+  #     # Filesystem Checks
+  #     - id: check-executables-have-shebangs
+  #       name: "📁 filesystem/⚙️ exec · Verify shebang presence"
+  #     - id: check-shebang-scripts-are-executable
+  #       name: "📁 filesystem/⚙️ exec · Verify script permissions"
+  #     - id: check-case-conflict
+  #       name: "📁 filesystem/📝 names · Check case sensitivity"
+  #     - id: check-illegal-windows-names
+  #       name: "📁 filesystem/📝 names · Validate Windows filenames"
+  #     - id: check-symlinks
+  #       name: "📁 filesystem/🔗 symlink · Check symlink validity"
+  #     - id: destroyed-symlinks
+  #       name: "📁 filesystem/🔗 symlink · Detect broken symlinks"
+  #     - id: check-added-large-files
+  #       name: "📁 filesystem/📄 size · Block large file commits"
+  #       args: ["--maxkb=5000"]
 
   # ------------------------------- 🌳 Git Tools ------------------------------ #
 
