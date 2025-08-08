@@ -57,7 +57,7 @@ jobs:
       - name: 📥 Fetch organization config
         run: |
           # Download the centralized config
-          curl -sSL https://raw.githubusercontent.com/${{ github.repository_owner }}/.github/${{ inputs.config-version }}/config/.pre-commit-config.yaml \
+          curl -sSL https://raw.githubusercontent.com/${{ github.repository_owner }}/called/${{ inputs.config-version }}/config/.pre-commit-config.yaml \
             -o .pre-commit-config-org.yaml
           
           # Create a hash for caching
