@@ -37,7 +37,7 @@ on:
       config-url:
         description: 'URL to the pre-commit config file'
         type: string
-        default: https://raw.githubusercontent.com/exploring-gh-organizations/called/main/configs/.pre-commit-config.yaml
+        default: https://raw.githubusercontent.com/exploring-gh-organizations/called/main/config/.pre-commit-config.yaml
 
 jobs:
   code-quality:
