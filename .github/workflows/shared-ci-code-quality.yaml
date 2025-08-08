@@ -1,32 +1,83 @@
 name: Shared Code Quality
 
+# on:
+#   workflow_call:
+
+# jobs:
+#   code-quality:
+#     name: Code Quality Checks
+#     runs-on: ubuntu-latest
+#     container:
+#       image: docker.io/reinhuddev1/code-quality:latest
+#       options: --user root
+#       # Add volume for caching between runs
+#       volumes:
+#         - /tmp/.buildx-cache:/tmp/.buildx-cache
+    
+#     steps:
+#       - name: 📦 Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+      
+#       - name: 🔧 Fix Git Safe Directory
+#         run: |
+#           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+#           git config --global --add safe.directory /github/workspace
+#           git config --global --add safe.directory $(pwd)
+      
+#       - name: 🧪 Run pre-commit
+#         run: |
+#           cp /.pre-commit-config.yaml .pre-commit-config.yaml
+#           pre-commit run --all-files --color=always
 on:
   workflow_call:
+    inputs:
+      config-version:
+        description: 'Version of the config to use'
+        type: string
+        default: 'main'
 
 jobs:
   code-quality:
-    name: Code Quality Checks
+    name: 🔍 Code Quality (Org Standards)
     runs-on: ubuntu-latest
-    container:
-      image: docker.io/reinhuddev1/code-quality:latest
-      options: --user root
-      # Add volume for caching between runs
-      volumes:
-        - /tmp/.buildx-cache:/tmp/.buildx-cache
     
     steps:
-      - name: 📦 Checkout
+      - name: 📦 Checkout code under test
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
-      - name: 🔧 Fix Git Safe Directory
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config --global --add safe.directory /github/workspace
-          git config --global --add safe.directory $(pwd)
+      - name: 🔧 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       
-      - name: 🧪 Run pre-commit
+      - name: 📥 Fetch organization config
         run: |
-          cp /.pre-commit-config.yaml .pre-commit-config.yaml
-          pre-commit run --all-files --color=always
+          # Download the centralized config
+          curl -sSL https://raw.githubusercontent.com/${{ github.repository_owner }}/.github/${{ inputs.config-version }}/configs/.pre-commit-config.yaml \
+            -o .pre-commit-config-org.yaml
+          
+          # Create a hash for caching
+          echo "CONFIG_HASH=$(sha256sum .pre-commit-config-org.yaml | cut -d' ' -f1)" >> $GITHUB_ENV
+      
+      - name: 💾 Cache pre-commit environments
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-centralized-${{ runner.os }}-${{ env.CONFIG_HASH }}
+          restore-keys: |
+            pre-commit-centralized-${{ runner.os }}-
+      
+      - name: 🔨 Install pre-commit
+        run: pip install pre-commit
+      
+      - name: 🚀 Run organization standards
+        run: |
+          # Run with the org config, not local config
+          pre-commit run --config .pre-commit-config-org.yaml --all-files --show-diff-on-failure
+        env:
+          # Ensure pre-commit uses our cache
+          PRE_COMMIT_HOME: ~/.cache/pre-commit
